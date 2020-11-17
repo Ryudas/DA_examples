@@ -16,6 +16,9 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
         this.id = id;
 
         this.clock = new int[3];
+        this.incrementClock();
+        this.incrementClock();
+        this.printData();
         java.rmi.Naming.bind("rmi://localhost:1098/BSS-" + id.toString(), this);
     }
 
@@ -27,20 +30,28 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
     @Override
     public void message(Message message) throws RemoteException {
         int delay = (int) (Math.random()*10);
-        System.out.println(delay);
+//        System.out.println(delay);
 
         try {
             Thread.sleep(delay*1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Lala");
     }
 
     public void printData() {
-        System.out.println("This is the vector clock:");
+        System.out.println("This is the vector clock for BSS" + this.id + ":");
+        System.out.print("[ ");
         for (int i = 0; i < this.clock.length; i++) {
-            System.out.println(this.clock[i]);
+            System.out.print(this.clock[i] + " ");
         }
+        System.out.print("]");
+        System.out.println();
     }
+
+    public void incrementClock() {
+        this.clock[Integer.parseInt(this.id)-1]++;
+    }
+
+
 }
