@@ -4,5 +4,5 @@ import java.rmi.Remote;
 
 // Birman-Schiper-Stephenson
 public interface BSS_RMI extends Remote {
-    public void message(Message message) throws java.rmi.RemoteException;
+    public void receive(Message message) throws java.rmi.RemoteException;
 }
