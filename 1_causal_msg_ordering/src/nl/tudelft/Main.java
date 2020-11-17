@@ -20,14 +20,10 @@ public class Main {
             java.rmi.registry.LocateRegistry.createRegistry(1098);
             Registry registry = LocateRegistry.getRegistry(1098);
             BSS obj1 = new BSS("1");
-            BSS obj2 = new BSS("2");
+//            BSS obj2 = new BSS("2");
 //            BSS obj3 = new BSS("3");
             BSS_RMI newobj = (BSS_RMI) registry.lookup("BSS-1");
             int[] clock = new int[3];
-            Message message = new Message(clock);
-//            message.print();
-            newobj.message(message);
-//            obj1.message("test output");
         } catch (RemoteException e ) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
