@@ -21,7 +21,15 @@ public class Main {
             Registry registry = LocateRegistry.getRegistry(1098);
 
             // Create threads for execution
+            Thread t_1 = new Thread(new BSS("1"));
+            Thread t_2 = new Thread(new BSS("2"));
+            Thread t_3 = new Thread(new BSS("3"));
 
+            // Start all objects in parallel
+            t_1.start();
+            t_2.start();
+            t_3.start();
+            /*
             BSS obj1 = new BSS("1");
             BSS obj2 = new BSS("2");
             BSS obj3 = new BSS("3");
@@ -36,6 +44,9 @@ public class Main {
             obj1.printData();
             obj2.printData();
             obj3.printData();
+
+
+             */
         } catch (RemoteException e ) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
