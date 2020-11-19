@@ -20,10 +20,18 @@ public class Main {
             java.rmi.registry.LocateRegistry.createRegistry(1098);
             Registry registry = LocateRegistry.getRegistry(1098);
 
+            BSS obj1 = new BSS("1");
+            int[] sched = new int[3];
+            obj1.set_schedule(sched);
+            BSS obj2 = new BSS("2");
+            obj2.set_schedule(sched);
+            BSS obj3 = new BSS("3");
+            obj3.set_schedule(sched);
+
             // Create threads for execution
-            Thread t_1 = new Thread(new BSS("1"));
-            Thread t_2 = new Thread(new BSS("2"));
-            Thread t_3 = new Thread(new BSS("3"));
+            Thread t_1 = new Thread(obj1);
+            Thread t_2 = new Thread(obj2);
+            Thread t_3 = new Thread(obj3);
 
             // Start all objects in parallel
             t_1.start();
@@ -53,8 +61,7 @@ public class Main {
             e.printStackTrace();
         } catch (AlreadyBoundException e) {
             e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
+
         }
     }
 }
