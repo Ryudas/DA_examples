@@ -27,18 +27,19 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
 
     }
 
-    // 
+    //
     public void set_schedule(int[] msg_times){
-
+        this.schedule = msg_times;
 
     }
     @Override
     public void run() {
+        // dummy amounts now
+        for( int i = 0 ; i < this.schedule.length; i++){
+            Message m1 = new Message(this.clock, this.id);
+            broadcast(m1);
+        }
 
-
-
-        Message m1 = new Message(this.clock, this.id);
-        broadcast(m1);
     }
 
     public void broadcast(Message message) {
