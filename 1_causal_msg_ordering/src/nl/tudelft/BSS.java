@@ -15,6 +15,7 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
     private String id;
     private int[] clock;
     private ArrayList<Message> buffer;
+    private int[] schedule;
 
     // constructor for a component of BSS
     protected BSS(String id) throws RemoteException, AlreadyBoundException, MalformedURLException {
@@ -26,8 +27,15 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
 
     }
 
+    // 
+    public void set_schedule(int[] msg_times){
+
+
+    }
     @Override
     public void run() {
+
+
 
         Message m1 = new Message(this.clock, this.id);
         broadcast(m1);
@@ -40,6 +48,7 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
             BSS_RMI one = (BSS_RMI) registry.lookup("BSS-1");
             BSS_RMI two = (BSS_RMI) registry.lookup("BSS-2");
             BSS_RMI three = (BSS_RMI) registry.lookup("BSS-3");
+
             this.incrementClock();
             message.clock[Integer.parseInt(message.sender)-1]++;
             one.receive(message);
