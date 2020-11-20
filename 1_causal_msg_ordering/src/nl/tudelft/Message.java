@@ -19,8 +19,8 @@ public class Message implements Serializable {
 
   public void print() {
     System.out.println("This is the vector clock:");
-    for (int i = 0; i < this.clock.length; i++) {
-      System.out.println(this.clock[i]);
+    for (int j : this.clock) {
+      System.out.println(j);
     }
   }
 }
