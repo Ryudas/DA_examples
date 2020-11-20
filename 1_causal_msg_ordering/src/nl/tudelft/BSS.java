@@ -86,15 +86,15 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
      */
     @Override
     public void receive(Message message) throws RemoteException {
-        System.out.println(this.id +" received the message " + Arrays.toString(message.clock) + " from " + message.sender);
+        System.out.println(this.id +" received the message w/ clock" + Arrays.toString(message.clock) + " from " + message.sender);
         int [] vplusej = this.clock;
-        if (!this.id.equals(message.sender)) {
+        //if (!this.id.equals(message.sender)) {
             //Adding this and changing to compLT somehow works...
             //this.clock[Integer.parseInt(message.sender)-1] = message.clock[Integer.parseInt(message.sender)-1];
 
-            vplusej[Integer.parseInt(message.sender)-1]++;
+            vplusej[Integer.parseInt(message.sender)-1] +=1;
            // this.incrementClock();
-        }
+        //}
 
         //System.out.println("vplusej: "+ Arrays.toString(vplusej) +". message clock: " + Arrays.toString(message.clock) +"" +
         //        ". vplusej is larger than message.clock: " + compGET(vplusej, message.clock));
@@ -116,9 +116,6 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
             this.buffer.add(message);
             System.out.println("Message from "+ message.sender+  " with clock: " + Arrays.toString(message.clock) + " added to the buffer of: " +  this.id );
         }
-
-        System.out.println(this.id + " now has the clock: " + Arrays.toString(this.clock));
-        System.out.println();
     }
 
     /**
@@ -128,11 +125,14 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
      */
     public void deliver(Message message) {
 //        this.incrementClock();
-        if (!this.id.equals(message.sender)){
-            this.clock[Integer.parseInt(message.sender)-1]++;
+        //if (!this.id.equals(message.sender)){
+            this.clock[Integer.parseInt(message.sender)-1] += 1;
             this.buffer.remove(message);
             System.out.println("Message delivered from " + message.sender + "in process:" + this.id  + Arrays.toString(message.clock));
-        }
+            System.out.println();
+            System.out.println(this.id + " now has the clock: " + Arrays.toString(this.clock));
+
+       // }
 
     }
 
