@@ -36,6 +36,9 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
     public void run() {
         // dummy amounts now
         for( int i = 0 ; i < this.schedule.length; i++){
+            // if clock is not current to the schedule get it to it,
+            // create message from current elem to all others
+            this.incrementClock();
             Message m1 = new Message(this.clock, this.id);
             broadcast(m1);
         }
@@ -45,15 +48,20 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
     public void broadcast(Message message) {
         Registry registry = null;
         try {
+            // load all objects
             registry = LocateRegistry.getRegistry(1098);
             BSS_RMI one = (BSS_RMI) registry.lookup("BSS-1");
             BSS_RMI two = (BSS_RMI) registry.lookup("BSS-2");
             BSS_RMI three = (BSS_RMI) registry.lookup("BSS-3");
 
-            this.incrementClock();
-            message.clock[Integer.parseInt(message.sender)-1]++;
+           // this.incrementClock();
+           // message.clock[Integer.parseInt(message.sender)-1]++;
+            // process random delay
+            delay();
             one.receive(message);
+            delay();
             two.receive(message);
+            delay();
             three.receive(message);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -78,22 +86,23 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
      */
     @Override
     public void receive(Message message) throws RemoteException {
-        delay();
         System.out.println(this.id +" received the message " + Arrays.toString(message.clock) + " from " + message.sender);
         int [] vplusej = this.clock;
         if (!this.id.equals(message.sender)) {
             //Adding this and changing to compLT somehow works...
             //this.clock[Integer.parseInt(message.sender)-1] = message.clock[Integer.parseInt(message.sender)-1];
 
-//            this.clock[Integer.parseInt(message.sender)-1]++;
-            this.incrementClock();
+            vplusej[Integer.parseInt(message.sender)-1]++;
+           // this.incrementClock();
         }
 
-        System.out.println("vplusej: "+ Arrays.toString(vplusej) +". message clock: " + Arrays.toString(message.clock) +"" +
-                ". vplusej is smaller than message.clock: " + compGET(vplusej, message.clock));
+        //System.out.println("vplusej: "+ Arrays.toString(vplusej) +". message clock: " + Arrays.toString(message.clock) +"" +
+        //        ". vplusej is larger than message.clock: " + compGET(vplusej, message.clock));
 
         if (compGET(vplusej, message.clock)) {
             deliver(message);
+
+            // once we delivered we might deliver more from the buffer
             this.buffer.forEach((Vm) -> {
                 int [] vplus_ek = this.clock;
                 vplus_ek[Integer.parseInt(Vm.sender)-1] += 1;
@@ -101,12 +110,11 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
                     //deliver the message or deliver Vm?
                     deliver(Vm);
                 }
-            }
-            );
+            });
         }
         else {
             this.buffer.add(message);
-            System.out.println("Message added to the buffer of " + message.sender + ": " + Arrays.toString(message.clock));
+            System.out.println("Message from "+ message.sender+  " with clock: " + Arrays.toString(message.clock) + " added to the buffer of: " +  this.id );
         }
 
         System.out.println(this.id + " now has the clock: " + Arrays.toString(this.clock));
@@ -123,6 +131,7 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
         if (!this.id.equals(message.sender)){
             this.clock[Integer.parseInt(message.sender)-1]++;
             this.buffer.remove(message);
+            System.out.println("Message delivered from " + message.sender + "in process:" + this.id  + Arrays.toString(message.clock));
         }
 
     }
@@ -155,14 +164,14 @@ public class BSS extends UnicastRemoteObject implements  BSS_RMI , Runnable  {
     }
 
     public boolean compGET(int[] first, int[] second) {
-        System.out.println("Compare get:");
-        System.out.println(Arrays.toString(first));
-        System.out.println(Arrays.toString(second));
-        System.out.println();
+        //System.out.println("Compare get:");
+        //System.out.println(Arrays.toString(first));
+        //System.out.println(Arrays.toString(second));
+        //System.out.println();
         for (int i = 0; i < 3; i++) {
-            System.out.println("Enter the for loop");
+            //System.out.println("Enter the for loop");
             if (first[i] < second[i]) {
-                System.out.println("first is smaller than second for element " + i);
+               // System.out.println("first is smaller than second for element " + i);
                 return false;
             }
         }

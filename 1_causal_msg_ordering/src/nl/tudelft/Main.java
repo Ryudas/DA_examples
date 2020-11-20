@@ -21,10 +21,12 @@ public class Main {
             Registry registry = LocateRegistry.getRegistry(1098);
 
             BSS obj1 = new BSS("1");
-            int[] sched = new int[3];
+            int[] sched = new int[1];
             obj1.set_schedule(sched);
             BSS obj2 = new BSS("2");
+            sched = new int[2];
             obj2.set_schedule(sched);
+            sched = new int[1];
             BSS obj3 = new BSS("3");
             obj3.set_schedule(sched);
 
