@@ -24,7 +24,7 @@ public class Main {
             int[] sched = new int[1];
             obj1.set_schedule(sched);
             BSS obj2 = new BSS("2");
-            sched = new int[2];
+            sched = new int[1];
             obj2.set_schedule(sched);
             sched = new int[1];
             BSS obj3 = new BSS("3");
