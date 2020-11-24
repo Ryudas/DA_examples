@@ -7,20 +7,13 @@ import java.io.Serializable;
  *
  */
 public class Message implements Serializable {
-  public int [] clock;
-  public String sender;
+  public int id;
+  public String type;
 
 
-  public Message(int[] clock, String sender) {
-    this.clock = new int[3];
-    this.clock = clock.clone();
-    this.sender = sender;
+  public Message(int id, String type) {
+    this.id = id;
+    this.type = type;
   }
 
-  public void print() {
-    System.out.println("This is the vector clock:");
-    for (int j : this.clock) {
-      System.out.println(j);
-    }
-  }
 }
