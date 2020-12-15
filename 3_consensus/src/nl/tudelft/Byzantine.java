@@ -48,21 +48,65 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
 
         do {
             // notification phase
-            this.send(new Message("N", this.r, this.v));
-            await_messages();
+            this.broadcast(new Message("N", this.r, this.v));
+            await_messages("N");
 
             // proposal phase
+            //  get counts of support for 0 or 1
+            int count_0 = (int) this.N_msgs.stream().filter(v -> v.equals(0)).count();
+            int count_1 = (int) this.N_msgs.stream().filter(v -> v.equals(1)).count();
 
+            if (count_0 >  ((this.num_nodes + this.f)/2) ) {
+                this.broadcast(new Message("P", this.r, 0));
+            } else if ( count_1 >  ((this.num_nodes + this.f)/2) ){
+                this.broadcast(new Message("P", this.r, 1));
+            }else {
+                this.broadcast(new Message("?", this.r, -1));
+            }
 
+            if(this.decided){
+                System.out.println("FINISHED");
+                break;
+            } else {
+                // awaits required messages
+                await_messages("P");
+                // decision phase
+                // recount messages
+                count_0 = (int) this.P_msgs.stream().filter(v -> v.equals(0)).count();
+                count_1 = (int) this.P_msgs.stream().filter(v -> v.equals(1)).count();
+
+                if (count_0 >  ((this.f)) ) {
+                    this.v = 0;
+                    if(count_0 > 3*this.f){
+                        decide(0);
+                        this.decided = true;
+
+                    }
+                } else if ( count_1 >  ((this.f)) ){
+
+                    this.v = 1;
+                    if(count_1 > 3*this.f){
+                        decide(1);
+                        this.decided = true;
+
+                    }
+
+                }else {
+                    this.v = (int) (Math.random()*1); // random between 0 and 1
+                }
+            }
+
+            this.r++;
         }while (true);
 
-
-        // proposal phase
 
 
         // decision phase
     }
 
+    public void decide(int v ){
+        return;
+    }
     public  void await_messages(String type){
         if(type.equals("N")){
             while ((this.N_msgs.size() < (this.num_nodes - this.f)) ){
@@ -83,7 +127,7 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
         }
 
     }
-    public void send(Message message) {
+    public void broadcast(Message message) {
         Registry registry = null;
         try {
             // load all  neighbours / completely connected network
