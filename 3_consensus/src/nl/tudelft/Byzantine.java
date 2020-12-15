@@ -163,13 +163,13 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
     public void receive(Message message) {
 
         if (message.type.equals("N") ) {
-          System.out.println("type" + message.type);
+          System.out.println("type" + message.type + "round" + message.round);
           this.N_msgs.add(message.v);
           return;
         }
 
         if (message.type.equals("P") ) {
-            System.out.println("type" + message.type);;
+            System.out.println("type" + message.type + "round" + message.round);;
             this.P_msgs.add(message.v);
             return;
         }

@@ -16,21 +16,15 @@ public class Main {
             Registry registry = LocateRegistry.getRegistry(1098);
 
             // create n byzantine nodes
-             int n = 6;
+             int n = 2;
              Byzantine[] nodes = new Byzantine[n];
 
              // initialize nodes
-            /* for(int i = 0 ; i < n; i++){
-                 nodes[i] = new Byzantine("4", 7);
-             }*/
+            for(int i = 0 ; i < n; i++){
+                 nodes[i] = new Byzantine(i, 0, false, 2,0);
+            }
 
 
-            nodes[0] = new Byzantine("4", 7);
-            nodes[1]= new Byzantine("9", 4);
-            nodes[2] = new Byzantine("12", 9);
-            nodes[3] = new Byzantine("1", 12);
-            nodes[4] = new Byzantine("14", 1);
-            nodes[5] = new Byzantine("7", 14);
 //
 //
 //
