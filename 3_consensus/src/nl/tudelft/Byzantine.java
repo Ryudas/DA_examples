@@ -11,20 +11,21 @@ import java.util.ArrayList;
 
 // Peterson algorithm class
 public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Runnable  {
+    private final int failure_mode;
     private int tid;
     private int v; // input value
     private int num_nodes;
     private int r =  1; // round
     private int f; // num faulty processes
     private boolean decided = false; // consensus decision
-    private boolean faulty = false;
+    private boolean faulty;
 
     ArrayList<Integer> N_msgs = new ArrayList<Integer>();
     ArrayList<Integer> P_msgs = new ArrayList<Integer>();
 
 
     // constructor for a component of BSS
-    protected Byzantine(int tid, int v, boolean faulty, int num_nodes, int faulty_proc) throws RemoteException, AlreadyBoundException, MalformedURLException {
+    protected Byzantine(int tid, int v, boolean faulty, int num_nodes, int faulty_proc, int failure_mode) throws RemoteException, AlreadyBoundException, MalformedURLException {
         // create a BSS component with a certain id and bind it to the remote
         this.tid = tid;
 //        this.ntid = -1;
@@ -33,6 +34,7 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
         this.num_nodes = num_nodes;
         this.faulty = faulty;
         this.f = faulty_proc;
+        this.failure_mode =  failure_mode;
         this.v = v;
         this.decided = false;
 
@@ -130,6 +132,26 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
     }
     public void broadcast(Message message) {
         Registry registry = null;
+
+        // failure modes
+        if(this.faulty){
+            if(this.failure_mode == 0){
+                return; //  does not send message at all
+
+
+            }else if (this.failure_mode == 1){
+                int coin_flip = (int) (Math.random());
+                if (coin_flip == 1){
+                    coin_flip = (int) (Math.random());
+                    message.v = coin_flip; // send random message v
+                }else{
+                    return; //  dont send message
+                }
+
+            }
+        }
+
+
         try {
             // load all  neighbours / completely connected network
             registry = LocateRegistry.getRegistry(1098);
