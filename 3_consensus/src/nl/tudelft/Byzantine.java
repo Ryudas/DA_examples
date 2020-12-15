@@ -48,6 +48,7 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
 
         do {
             // notification phase
+
             this.broadcast(new Message("N", this.r, this.v));
             await_messages("N");
 
@@ -65,7 +66,7 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
             }
 
             if(this.decided){
-                System.out.println("FINISHED");
+                System.out.println("Node " + this.tid + " is finished in round " + this.r +  " with ending value v="+ this.v  );
                 break;
             } else {
                 // awaits required messages
@@ -141,8 +142,14 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
             }
             // Byzantine_RMI neighbour = (Byzantine_RMI) registry.lookup("Byzantine-"+this.neighbour);
 
-
+            //System.out.println(this.tid + "this start");
             for(int i = 0; i < this.num_nodes; i++){
+                //System.out.println(i);
+                /*
+                if(i == this.tid){
+                    continue; // skip itself
+                }
+                */
                 delay();
                 neighbours[i].receive(message);
             }
@@ -163,13 +170,13 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
     public void receive(Message message) {
 
         if (message.type.equals("N") ) {
-          System.out.println("type" + message.type + "round" + message.round);
+          //System.out.println("type" + message.type + "round" + message.round);
           this.N_msgs.add(message.v);
           return;
         }
 
         if (message.type.equals("P") ) {
-            System.out.println("type" + message.type + "round" + message.round);;
+           // System.out.println("type" + message.type + "round" + message.round);;
             this.P_msgs.add(message.v);
             return;
         }

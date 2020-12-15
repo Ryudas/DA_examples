@@ -21,7 +21,7 @@ public class Main {
 
              // initialize nodes
             for(int i = 0 ; i < n; i++){
-                 nodes[i] = new Byzantine(i, 0, false, 2,0);
+                 nodes[i] = new Byzantine(i, 0, false, n,0);
             }
 
 
