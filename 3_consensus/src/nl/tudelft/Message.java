@@ -7,13 +7,16 @@ import java.io.Serializable;
  *
  */
 public class Message implements Serializable {
-  public int id;
+
   public String type;
+  public int round;
+  public int v;
 
 
-  public Message(int id, String type) {
-    this.id = id;
+  public Message(String type, int round, int v) {
     this.type = type;
+    this.round = round;
+    this.v =  v;
   }
 
 }

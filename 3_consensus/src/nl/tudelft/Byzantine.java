@@ -13,25 +13,25 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
     private int tid;
     private int v; // input value
     private int num_nodes;
-    private boolean passive;
-    private boolean elected;
-    private String neighbour;
-    private boolean receivedNtid;
-    private boolean receivedNntid;
-    private Object Byzantine_RMI;
+    private int r =  1; // round
+    private int f; // num faulty processes
+    private boolean decided = false; // consensus decision
+    private boolean faulty = false;
 
 
     // constructor for a component of BSS
-    protected Byzantine(String neighbour, int tid) throws RemoteException, AlreadyBoundException, MalformedURLException {
+    protected Byzantine(int tid, boolean faulty, int num_nodes, int faulty_proc) throws RemoteException, AlreadyBoundException, MalformedURLException {
         // create a BSS component with a certain id and bind it to the remote
         this.tid = tid;
 //        this.ntid = -1;
 //        this.nntid = -1;
-        this.passive = false;
-        this.elected = false;
-        this.receivedNtid = false;
-        this.receivedNntid = false;
-        this.neighbour = neighbour;
+        this.r = 1;
+        this.num_nodes = num_nodes;
+        this.faulty = faulty;
+        this.f = faulty_proc;
+
+
+        // bind object
         java.rmi.Naming.bind("rmi://localhost:1098/Byzantine-" + tid, this);
 
     }
