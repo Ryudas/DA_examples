@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 // Peterson algorithm class
 public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Runnable  {
@@ -18,9 +19,12 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
     private boolean decided = false; // consensus decision
     private boolean faulty = false;
 
+    ArrayList<Integer> N_msgs = new ArrayList<Integer>();
+    ArrayList<Integer> P_msgs = new ArrayList<Integer>();
+
 
     // constructor for a component of BSS
-    protected Byzantine(int tid, boolean faulty, int num_nodes, int faulty_proc) throws RemoteException, AlreadyBoundException, MalformedURLException {
+    protected Byzantine(int tid, int v, boolean faulty, int num_nodes, int faulty_proc) throws RemoteException, AlreadyBoundException, MalformedURLException {
         // create a BSS component with a certain id and bind it to the remote
         this.tid = tid;
 //        this.ntid = -1;
@@ -29,6 +33,8 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
         this.num_nodes = num_nodes;
         this.faulty = faulty;
         this.f = faulty_proc;
+        this.v = v;
+        this.decided = false;
 
 
         // bind object
@@ -39,9 +45,44 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
 
     @Override
     public void run() {
-        this.send(new Message(this.tid,"ntid"));
+
+        do {
+            // notification phase
+            this.send(new Message("N", this.r, this.v));
+            await_messages();
+
+            // proposal phase
+
+
+        }while (true);
+
+
+        // proposal phase
+
+
+        // decision phase
     }
 
+    public  void await_messages(String type){
+        if(type.equals("N")){
+            while ((this.N_msgs.size() < (this.num_nodes - this.f)) ){
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if (type.equals("P")){
+            while ((this.P_msgs.size() < (this.num_nodes - this.f)) ){
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
     public void send(Message message) {
         Registry registry = null;
         try {
@@ -77,87 +118,20 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
     @Override
     public void receive(Message message) {
 
-
-        if (message.type.equals("elected") || this.tid == message.id) {
-          System.out.println("Finished with elected: " + message.id);
+        if (message.type.equals("N") ) {
+          System.out.println("type" + message.type);
+          this.N_msgs.add(message.v);
           return;
         }
 
-        if (this.passive) {
-          System.out.println("[" + this.tid + "] " + "[" + message.type + "] Relaying: " + message.id);
-             this.relay(message);
-         }
-        else {
-            System.out.println("[" + this.tid + "] " + "[" + message.type + "] Message received: " + message.id);
-
-
-            if (message.type.equals("ntid")) {
-              this.ntid = message.id;
-              this.receivedNtid = true;
-              receiveNtid(message);
-            }
-
-
-            if (message.type.equals("nntid")) {
-              this.nntid = message.id;
-              this.receivedNntid = true;
-              receiveNntid(message);
-            }
-
-
-            if (this.ntid >= this.tid && this.ntid >= this.nntid) {
-                System.out.println(this.tid + " has been changed to " + this.ntid);
-                this.tid = this.ntid;
-                this.passive = false;
-            }
-            else {
-                this.passive = true;
-                System.out.println("I have been idled!");
-            }
-            this.receivedNntid = false;
-            this.receivedNtid = false;
-            send(new Message(this.tid, "ntid"));
+        if (message.type.equals("P") ) {
+            System.out.println("type" + message.type);;
+            this.P_msgs.add(message.v);
+            return;
         }
 
-    }
-
-    public void relay(Message message) {
-        if (this.tid == message.id) {
-            this.elected = true;
-        }
-        this.send(message);
-    }
-
-    public void receiveNtid(Message message) {
-      while (!receivedNtid) {
-        try {
-          Thread.sleep(1000L);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      }
-      if (this.tid == this.ntid) {
-        this.elected = true;
-        send(new Message(this.tid, "elected"));
-      }
-      send(new Message(Math.max(this.tid, this.ntid), "nntid"));
 
     }
-
-  public void receiveNntid(Message message) {
-    while (!receivedNntid) {
-      try {
-        Thread.sleep(1000L);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    }
-    if (this.tid == this.nntid) {
-      this.elected = true;
-      send(new Message(this.tid, "elected"));
-    }
-
-  }
 
     public void delay() {
       int delay = (int) (Math.random()*2);
@@ -170,7 +144,7 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
     }
 
     public void printData() {
-        System.out.println("tid: " + this.tid + ", ntid: " + this.ntid + ", nntid: " + this.nntid);
+        System.out.println("tid: " + this.tid ); //+ //", ntid: " + this.ntid + ", nntid: " + this.nntid);
     }
 
 
