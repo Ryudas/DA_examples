@@ -18,6 +18,8 @@ public class Main {
             // create n byzantine nodes
              int n = 6;
              Byzantine[] nodes = new Byzantine[n];
+
+             // initialize nodes
             /* for(int i = 0 ; i < n; i++){
                  nodes[i] = new Byzantine("4", 7);
              }*/

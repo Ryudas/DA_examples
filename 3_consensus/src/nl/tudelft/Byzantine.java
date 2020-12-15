@@ -11,13 +11,14 @@ import java.rmi.server.UnicastRemoteObject;
 // Peterson algorithm class
 public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Runnable  {
     private int tid;
-    private int ntid;
-    private int nntid;
+    private int v; // input value
+    private int num_nodes;
     private boolean passive;
     private boolean elected;
     private String neighbour;
     private boolean receivedNtid;
     private boolean receivedNntid;
+    private Object Byzantine_RMI;
 
 
     // constructor for a component of BSS
@@ -31,7 +32,7 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
         this.receivedNtid = false;
         this.receivedNntid = false;
         this.neighbour = neighbour;
-        java.rmi.Naming.bind("rmi://localhost:1098/Peterson-" + tid, this);
+        java.rmi.Naming.bind("rmi://localhost:1098/Byzantine-" + tid, this);
 
     }
 
@@ -44,11 +45,22 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
     public void send(Message message) {
         Registry registry = null;
         try {
-            // load all objects
+            // load all  neighbours / completely connected network
             registry = LocateRegistry.getRegistry(1098);
-            Byzantine_RMI neighbour = (Byzantine_RMI) registry.lookup("Peterson-"+this.neighbour);
-            delay();
-            neighbour.receive(message);
+
+            Byzantine_RMI [] neighbours = new Byzantine_RMI[this.num_nodes];
+
+            // broadcast all messages
+            for(int i = 0; i < this.num_nodes; i++){
+                neighbours[i] = (Byzantine_RMI) registry.lookup("Byzantine-"+ i);
+            }
+            // Byzantine_RMI neighbour = (Byzantine_RMI) registry.lookup("Byzantine-"+this.neighbour);
+
+
+            for(int i = 0; i < this.num_nodes; i++){
+                delay();
+                neighbours[i].receive(message);
+            }
 
         } catch (RemoteException e) {
             e.printStackTrace();
