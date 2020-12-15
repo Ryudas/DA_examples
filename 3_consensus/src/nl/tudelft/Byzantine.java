@@ -7,10 +7,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Arrays;
 
 // Peterson algorithm class
-public class Peterson extends UnicastRemoteObject implements Peterson_RMI, Runnable  {
+public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Runnable  {
     private int tid;
     private int ntid;
     private int nntid;
@@ -22,7 +21,7 @@ public class Peterson extends UnicastRemoteObject implements Peterson_RMI, Runna
 
 
     // constructor for a component of BSS
-    protected Peterson(String neighbour, int tid) throws RemoteException, AlreadyBoundException, MalformedURLException {
+    protected Byzantine(String neighbour, int tid) throws RemoteException, AlreadyBoundException, MalformedURLException {
         // create a BSS component with a certain id and bind it to the remote
         this.tid = tid;
 //        this.ntid = -1;
@@ -47,7 +46,7 @@ public class Peterson extends UnicastRemoteObject implements Peterson_RMI, Runna
         try {
             // load all objects
             registry = LocateRegistry.getRegistry(1098);
-            Peterson_RMI neighbour = (Peterson_RMI) registry.lookup("Peterson-"+this.neighbour);
+            Byzantine_RMI neighbour = (Byzantine_RMI) registry.lookup("Peterson-"+this.neighbour);
             delay();
             neighbour.receive(message);
 

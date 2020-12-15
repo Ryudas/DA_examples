@@ -15,39 +15,57 @@ public class Main {
             java.rmi.registry.LocateRegistry.createRegistry(1098);
             Registry registry = LocateRegistry.getRegistry(1098);
 
-            Peterson obj1 = new Peterson("4", 7);
-            Peterson obj2 = new Peterson("9", 4);
-            Peterson obj3 = new Peterson("12", 9);
-            Peterson obj4 = new Peterson("1", 12);
-            Peterson obj5 = new Peterson("14", 1);
-            Peterson obj6 = new Peterson("7", 14);
+            // create n byzantine nodes
+             int n = 6;
+             Byzantine[] nodes = new Byzantine[n];
+            /* for(int i = 0 ; i < n; i++){
+                 nodes[i] = new Byzantine("4", 7);
+             }*/
+
+
+            nodes[0] = new Byzantine("4", 7);
+            nodes[1]= new Byzantine("9", 4);
+            nodes[2] = new Byzantine("12", 9);
+            nodes[3] = new Byzantine("1", 12);
+            nodes[4] = new Byzantine("14", 1);
+            nodes[5] = new Byzantine("7", 14);
+//
+//
+//
 //            Peterson obj6 = new Peterson("8", 3);
 //            Peterson obj7 = new Peterson("2", 8);
 //            Peterson obj8 = new Peterson("6", 2);
 //            Peterson obj9 = new Peterson("5", 6);
 //            Peterson obj10 = new Peterson("7", 5);
 
-
+            // Create threads for execution
+            Thread[] node_threads = new Thread[n];
+            for(int i = 0 ; i < n; i++){
+                 node_threads[i] = new Thread(nodes[i]);
+             }
 
             // Create threads for execution
-            Thread t_1 = new Thread(obj1);
-            Thread t_2 = new Thread(obj2);
-            Thread t_3 = new Thread(obj3);
-            Thread t_4 = new Thread(obj4);
-            Thread t_5 = new Thread(obj5);
-            Thread t_6 = new Thread(obj6);
+//            Thread t_1 = new Thread(obj1);
+//            Thread t_2 = new Thread(obj2);
+//            Thread t_3 = new Thread(obj3);
+//            Thread t_4 = new Thread(obj4);
+//            Thread t_5 = new Thread(obj5);
+//            Thread t_6 = new Thread(obj6);
 //            Thread t_7 = new Thread(obj7);
 //            Thread t_8 = new Thread(obj8);
 //            Thread t_9 = new Thread(obj9);
 //            Thread t_10 = new Thread(obj10);
 
             // Start all objects in parallel
-            t_1.start();
-            t_2.start();
-            t_3.start();
-            t_4.start();
-            t_5.start();
-            t_6.start();
+            for(int i = 0 ; i < n; i++){
+                node_threads[i].start();
+            }
+//            t_1.start();
+//            t_2.start();
+//            t_3.start();
+//            t_4.start();
+//            t_5.start();
+//            t_6.start();
 //            t_7.start();
 //            t_8.start();
 //            t_9.start();
