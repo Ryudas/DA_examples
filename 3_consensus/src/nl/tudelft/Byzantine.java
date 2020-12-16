@@ -100,6 +100,9 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI, Run
             }
 
             this.r++;
+            // clear intermediate buffers
+            N_msgs.clear();
+            P_msgs.clear();
         }while (true);
 
 
